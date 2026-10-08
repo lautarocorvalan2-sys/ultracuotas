@@ -1,6 +1,6 @@
 {
   "name": "ultracuotas",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Sistema de Gestion de Ventas en Cuotas",
   "main": "main.js",
   "scripts": {
