@@ -1,0 +1,19 @@
+{
+  "name": "ultracuotas",
+  "version": "1.0.0",
+  "description": "Sistema de Gestion de Ventas en Cuotas",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "form-data": "^4.0.6",
+    "node-fetch": "^2.7.0",
+    "sqlite3": "^6.0.1"
+  },
+  "devDependencies": {
+    "electron": "^28.2.0"
+  }
+}

@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UltraCuotas</title>
+  <style>
+    :root {
+      --bg-body: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-subtle: #f1f5f9;
+      --border: #e2e8f0;
+      --border-focus: #4f46e5;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
+      --header-bg: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+    }
+
+    body.dark-mode {
+      --bg-body: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-surface-subtle: #0f172a;
+      --border: #334155;
+      --border-focus: #818cf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #6366f1;
+      --primary-hover: #818cf8;
+      --primary-light: #1e1b4b;
+      --header-bg: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg-body); color: var(--text-main); }
+
+    /* LOGIN */
+    .login-container-exacto {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .login-col-info {
+      background: #ffffff;
+      border-right: 1px solid #e2e8f0;
+      color: #0f172a;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .login-brand-centrado {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex: 1;
+    }
+
+    .login-bottom-section { margin-top: auto; }
+
+    .card-promo {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 9px 12px;
+      margin-bottom: 10px;
+    }
+    .card-promo strong { display: block; font-size: 11px; color: #4338ca; margin-bottom: 2px; }
+    .card-promo span { display: block; font-size: 11px; color: #475569; line-height: 1.3; }
+
+    .btn-anydesk-directo {
+      background: #ef4444;
+      color: #ffffff;
+      border: none;
+      padding: 9px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+    }
+    .btn-anydesk-directo:hover { background: #dc2626; }
+
+    .login-col-form {
+      padding: 26px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: #ffffff;
+    }
+    .login-col-form h3 { font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 2px; }
+    .login-col-form span.sub { font-size: 11px; color: #64748b; margin-bottom: 16px; display: block; }
+
+    .login-error-box {
+      display: none;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #b91c1c;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    /* CABECERA */
+    header {
+      background: var(--header-bg);
+      color: #ffffff;
+      padding: 10px 24px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+    .brand-title { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+    .brand-subtitle { font-size: 12px; color: #cbd5e1; }
+
+    .header-center-logo { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .header-logo-img { max-height: 52px; max-width: 160px; object-fit: contain; background: rgba(255, 255, 255, 0.95); border-radius: 8px; padding: 3px 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.25); display: none; }
+    .header-logo-placeholder { font-size: 11px; color: #cbd5e1; border: 1px dashed rgba(255,255,255,0.3); padding: 4px 12px; border-radius: 20px; }
+
+    .header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+    .notif-btn, .theme-switch, .btn-logout {
+      background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff;
+      padding: 7px 13px; border-radius: 30px; cursor: pointer; font-size: 12px; font-weight: 700;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .notif-btn:hover, .theme-switch:hover, .btn-logout:hover { background: rgba(255, 255, 255, 0.22); }
+    .notif-badge { background: #ef4444; color: #ffffff; font-size: 11px; padding: 2px 6px; border-radius: 12px; font-weight: 800; }
+
+    .notif-panel {
+      position: absolute; top: 62px; right: 24px; width: 400px; max-height: 480px;
+      background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px;
+      box-shadow: var(--card-shadow); display: none; flex-direction: column; z-index: 10000; overflow: hidden;
+    }
+    .notif-panel.open { display: flex; }
+    .notif-header { padding: 12px 16px; background: var(--bg-surface-subtle); border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 700; display: flex; justify-content: space-between; }
+    .notif-list { overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .notif-item { padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-surface); display: flex; justify-content: space-between; align-items: center; }
+    .notif-item.vencida { border-left: 4px solid var(--danger); }
+    .notif-item.por-vencer { border-left: 4px solid var(--warning); }
+
+    .btn-wsp { background: #25d366; color: #fff; border: none; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+    .user-pill { background: rgba(255, 255, 255, 0.15); padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+
+    /* NAVEGACIÓN */
+    .tabs-nav { display: flex; gap: 10px; padding: 10px 24px; background: var(--bg-surface); border-bottom: 1px solid var(--border); }
+    .nav-btn { background: transparent; border: none; padding: 9px 16px; font-size: 13px; font-weight: 600; color: var(--text-muted); border-radius: 8px; cursor: pointer; }
+    .nav-btn:hover { background: var(--bg-surface-subtle); color: var(--text-main); }
+    .nav-btn.active { background: var(--primary-light); color: var(--primary); }
+
+    /* ANCHO COMPLETO PARA TODO EL SISTEMA */
+    .container { width: 98%; max-width: 1600px; margin: 16px auto; padding: 0 10px; }
+    .panel { display: none; }
+    .panel.active { display: block; animation: fadeIn 0.2s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: var(--card-shadow); margin-bottom: 20px; width: 100%; }
+    .card-header { font-size: 17px; font-weight: 700; margin-bottom: 16px; color: var(--text-main); }
+
+    .cobranzas-grid { display: grid; grid-template-columns: 360px 1fr; gap: 20px; align-items: start; }
+    .clientes-sidebar { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .search-box { width: 100%; background: var(--bg-surface-subtle); border: 1px solid var(--border); color: var(--text-main); padding: 10px 14px; border-radius: 8px; font-size: 14px; margin-bottom: 14px; outline: none; }
+    .lista-clientes-scroll { max-height: 600px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+
+    .cliente-item-btn { text-align: left; background: var(--bg-surface); border: 1px solid var(--border); padding: 12px 14px; border-radius: 8px; cursor: pointer; }
+    .cliente-item-btn:hover { background: var(--bg-surface-subtle); }
+    .cliente-item-btn.activo { border-color: var(--primary); background: var(--primary-light); }
+    .cliente-item-btn strong { display: block; font-size: 14px; }
+    .cliente-item-btn span { display: block; font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    .credito-card { background: var(--bg-surface-subtle); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 14px; overflow: hidden; }
+    .credito-card.activo { border-color: var(--primary); }
+    .credito-card-header { padding: 16px 18px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+    .credito-card-body { display: none; padding: 16px 18px; border-top: 1px solid var(--border); background: var(--bg-surface); }
+    .credito-card-body.open { display: block; }
+
+    .garante-badge-box { margin-top: 8px; background: rgba(99, 102, 241, 0.08); border: 1px dashed var(--primary); border-radius: 6px; padding: 8px 12px; font-size: 12px; display: flex; align-items: center; justify-content: space-between; }
+    .subtabs-nav { display: flex; gap: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+    .subtab-btn { background: transparent; border: none; padding: 8px 14px; font-size: 13px; font-weight: 600; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; }
+    .subtab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 16px; }
+    .field { display: flex; flex-direction: column; }
+    .field label { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+    .field input, .field select, .field textarea { background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-main); padding: 10px 12px; border-radius: 6px; font-size: 14px; outline: none; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--border-focus); }
+
+    .tipo-op-selector { display: flex; gap: 12px; margin-bottom: 20px; }
+    .btn-tipo-op { flex: 1; padding: 12px; border: 2px solid var(--border); border-radius: 8px; background: var(--bg-surface-subtle); font-size: 14px; font-weight: 700; color: var(--text-muted); cursor: pointer; text-align: center; }
+    .btn-tipo-op.activo { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+
+    .garante-toggle-box { background: var(--bg-surface-subtle); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; margin: 16px 0; }
+    .garante-check-label { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+    .garante-campos { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--border); }
+    .garante-campos.open { display: block; }
+
+    .result-display { background: var(--bg-surface-subtle); border: 1px solid var(--border); border-radius: 10px; padding: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; text-align: center; margin-top: 14px; }
+    .result-box span { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+    .result-box strong { display: block; font-size: 20px; font-weight: 800; margin-top: 4px; color: var(--text-main); }
+
+    .table-container { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-surface); }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { background: var(--bg-surface-subtle); color: var(--text-muted); font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+    td { padding: 12px 14px; font-size: 13px; color: var(--text-main); border-bottom: 1px solid var(--border); }
+    tr:hover td { background: var(--bg-surface-subtle); }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 18px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; }
+    .btn-main { background: var(--primary); color: #ffffff; }
+    .btn-main:hover { background: var(--primary-hover); }
+    .btn-badge { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-warning { background: var(--warning); color: #fff; }
+    .btn-danger { background: var(--danger); color: #fff; }
+
+    .status-badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+    .status-pendiente { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+    .status-parcial { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+    .status-pagada { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+
+    .alerta-mora-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-size: 13px; color: #92400e; display: flex; align-items: center; gap: 8px; }
+
+    .config-menu-tabs { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+    .cfg-tab-btn { flex: 1; min-width: 150px; padding: 12px; background: var(--bg-surface); border: 2px solid var(--border); border-radius: 10px; font-size: 14px; font-weight: 700; color: var(--text-muted); cursor: pointer; text-align: center; }
+    .cfg-tab-btn:hover { background: var(--bg-surface-subtle); }
+    .cfg-tab-btn.activo { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+    .cfg-subpanel { display: none; }
+    .cfg-subpanel.activo { display: block; }
+
+    /* COPIAS DE SEGURIDAD PARALELAS (UNA AL LADO DE LA OTRA) */
+    .backup-grid-dos-columnas {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+    .backup-box { background: var(--bg-surface-subtle); border: 1px solid var(--border); border-radius: 10px; padding: 20px; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+
+    .modal-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 9999; }
+    .modal-backdrop.open { display: flex; }
+    .modal-box { background: var(--bg-surface); border: 1px solid var(--border); padding: 24px; border-radius: 14px; width: 90%; max-width: 500px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.35); }
+
+    .modal-transferencia-box {
+      background: var(--bg-surface);
+      border: 3px solid #009ee3;
+      border-radius: 16px;
+      padding: 28px 24px;
+      width: 90%;
+      max-width: 480px;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(0, 158, 227, 0.35);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="pantalla-login" class="login-container-exacto">
+    <div class="login-col-info">
+      <div class="login-brand-centrado">
+        <img src="logo.png" style="max-width: 250px; max-height: 150px; object-fit: contain;" alt="UltraCuotas">
+      </div>
+
+      <div class="login-bottom-section">
+        <div class="card-promo" id="card-soporte-login">
+          <strong id="lbl-login-soporte-titulo">💼 ¿Querés contratar este sistema?</strong>
+          <span id="lbl-login-soporte-texto">Instalación, soporte técnico y desarrollo a medida.</span>
+          <div style="margin-top: 5px; font-size: 11px; font-weight: bold; color: #0f172a; display: flex; flex-direction: column; gap: 3px;">
+            <div id="box-login-wsp1">
+              📞 Contacto 1: <span id="lbl-login-soporte-wsp" style="color:#4338ca;">+54 9 3843-404771</span>
+            </div>
+            <div id="box-login-wsp2" style="display: none;">
+              📞 Contacto 2: <span id="lbl-login-soporte-wsp2" style="color:#4338ca;"></span>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn-anydesk-directo" onclick="lanzarAnyDesk()">
+          🖥️ Abrir Soporte Remoto (AnyDesk)
+        </button>
+      </div>
+    </div>
+
+    <div class="login-col-form">
+      <h3>Iniciar Sesión</h3>
+      <span class="sub">Ingresá tus credenciales autorizadas</span>
+
+      <div id="login-error-msg" class="login-error-box">Usuario o contraseña incorrectos</div>
+
+      <form onsubmit="ejecutarLogin(event)">
+        <div class="field" style="margin-bottom: 12px;">
+          <label>Usuario</label>
+          <input type="text" id="login-usuario" placeholder="admin" autocomplete="username" required autofocus>
+        </div>
+        <div class="field" style="margin-bottom: 16px;">
+          <label>Contraseña</label>
+          <input type="password" id="login-clave" placeholder="••••" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn btn-main" style="width: 100%; padding: 10px;">Ingresar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SISTEMA PRINCIPAL -->
+  <div id="sistema-app" style="display: none;">
+    <header>
+      <div>
+        <div class="brand-title">⚡ UltraCuotas</div>
+        <div class="brand-subtitle">Gestión Comercial & Control Financiero</div>
+      </div>
+
+      <div class="header-center-logo">
+        <img id="header-logo-preview" class="header-logo-img" alt="Logo">
+        <span id="header-logo-placeholder" class="header-logo-placeholder">Sin Logo del Comercio</span>
+      </div>
+
+      <div class="header-actions">
+        <button class="notif-btn" onclick="alternarPanelAlertas(event)">
+          🔔 Vencimientos
+          <span id="badge-contador-alertas" class="notif-badge" style="display:none;">0</span>
+        </button>
+
+        <div id="panel-alertas-flotante" class="notif-panel">
+          <div class="notif-header">
+            <span>Alertas de Cobranza (Día 10)</span>
+            <span style="cursor:pointer;" onclick="cerrarPanelAlertas()">✕</span>
+          </div>
+          <div id="lista-alertas-notif" class="notif-list"></div>
+        </div>
+
+        <button class="theme-switch" onclick="alternarTema()">
+          <span id="theme-ico">🌙</span> Tema
+        </button>
+
+        <div class="user-pill">
+          👤 <span id="lbl-usuario-actual">admin</span>
+        </div>
+
+        <button class="btn-logout" onclick="ejecutarSalidaConTurnoAbierto()">Salir</button>
+      </div>
+    </header>
+
+    <!-- 1. ORDEN DE PESTAÑAS: CAJA DIARIA PRIMERO -->
+    <div class="tabs-nav">
+      <button class="nav-btn active" onclick="verPestana('caja', this)">💵 Caja Diaria</button>
+      <button class="nav-btn" onclick="verPestana('cobranzas', this)">💳 Cobranzas y Créditos</button>
+      <button class="nav-btn" onclick="verPestana('operacion', this)">➕ Nueva Operación</button>
+      <button class="nav-btn" onclick="verPestana('cartera', this)">👥 Cartera de Abonados</button>
+      <button class="nav-btn" onclick="verPestana('config', this)">⚙️ Configuración</button>
+    </div>
+
+    <div class="container">
+      <!-- PANEL CAJA DIARIA (ACTIVO POR DEFECTO CON BOTONES DE ENTRADA Y SALIDA BIEN VISIBLES) -->
+      <div id="panel-caja" class="panel active">
+        <div id="caja-cerrada-view" class="card" style="text-align: center; padding: 40px 20px; display: none;">
+          <h2>La caja diaria se encuentra cerrada</h2>
+          <p style="color:var(--text-muted); margin: 8px 0 20px 0;">Ingresá el efectivo inicial en mostrador para iniciar la sesión.</p>
+          <form onsubmit="abrirCaja(event)" style="max-width: 320px; margin: 0 auto; display: flex; gap: 10px;">
+            <input type="number" id="monto-apertura" step="0.01" placeholder="Monto inicial $" required class="search-box" style="margin-bottom:0;">
+            <button type="submit" class="btn btn-main">Abrir Caja</button>
+          </form>
+        </div>
+
+        <div id="caja-abierta-view" style="display: none;">
+          <div class="result-display" style="margin-top:0; margin-bottom:20px;">
+            <div class="result-box">
+              <span>Monto Inicial</span>
+              <strong id="stat-caja-inicial">$0.00</strong>
+            </div>
+            <div class="result-box">
+              <span>Cobranzas</span>
+              <strong id="stat-caja-cobranzas" style="color:var(--success);">$0.00</strong>
+            </div>
+            <div class="result-box">
+              <span>Entradas Extras</span>
+              <strong id="stat-caja-ingresos">$0.00</strong>
+            </div>
+            <div class="result-box">
+              <span>Salidas / Gastos</span>
+              <strong id="stat-caja-egresos" style="color:var(--danger);">$0.00</strong>
+            </div>
+            <div class="result-box">
+              <span>Efectivo en Mostrador</span>
+              <strong id="stat-caja-esperado" style="color:var(--primary);">$0.00</strong>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+              <div class="card-header" style="margin-bottom:0;">Movimientos del Turno</div>
+              <div style="display: flex; gap: 10px;">
+                <button type="button" class="btn btn-success" style="padding: 10px 16px; font-size:13px;" onclick="abrirModalMovimiento('INGRESO')">➕ Entrada Extra de Dinero</button>
+                <button type="button" class="btn btn-danger" style="padding: 10px 16px; font-size:13px;" onclick="abrirModalMovimiento('EGRESO')">➖ Salida / Gasto de Dinero</button>
+                <button type="button" class="btn btn-main" onclick="abrirModalCierreCaja()">🔒 Cerrar Turno / Arqueo</button>
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Hora</th>
+                    <th>Tipo</th>
+                    <th>Concepto</th>
+                    <th>Usuario</th>
+                    <th>Monto</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-movimientos-caja-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL COBRANZAS -->
+      <div id="panel-cobranzas" class="panel">
+        <div class="cobranzas-grid">
+          <div class="clientes-sidebar">
+            <h3 style="font-size:15px; margin-bottom:12px;">Buscar Abonado</h3>
+            <input type="text" id="buscar-cliente" class="search-box" placeholder="Nombre o DNI..." oninput="filtrarClientesEnLista()">
+            <div id="lista-clientes-cobranzas" class="lista-clientes-scroll"></div>
+          </div>
+
+          <div id="ficha-cliente-container">
+            <div id="detalle-cliente-vacio" class="card" style="text-align: center; padding: 50px 20px; color: var(--text-muted);">
+              <h3>Seleccioná un abonado de la lista izquierda</h3>
+              <p style="font-size:13px; margin-top:6px;">Podrás visualizar sus créditos, cobrar cuotas y emitir recibos térmicos.</p>
+            </div>
+
+            <div id="detalle-cliente-ficha" style="display: none;">
+              <div class="card" style="margin-bottom: 14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <h2 id="ficha-nombre" style="font-size: 20px; font-weight:800;">-</h2>
+                    <span id="ficha-info" style="font-size:13px; color:var(--text-muted);">-</span>
+                  </div>
+                  <div class="subtabs-nav" style="border-bottom:none; margin-bottom:0;">
+                    <button class="subtab-btn active" id="btn-subtab-creditos" onclick="cambiarSubTab('creditos')">Créditos Activos</button>
+                    <button class="subtab-btn" id="btn-subtab-pagos" onclick="cambiarSubTab('pagos')">Historial de Recibos</button>
+                  </div>
+                </div>
+              </div>
+
+              <div id="subvista-creditos">
+                <div id="contenedor-creditos-cliente"></div>
+              </div>
+
+              <div id="subvista-pagos" style="display: none;">
+                <div class="card">
+                  <div class="card-header">Comprobantes Emitidos</div>
+                  <div class="table-container">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Concepto</th>
+                          <th>Cuota</th>
+                          <th>Cobrado</th>
+                          <th>Mora</th>
+                          <th>Medio</th>
+                          <th>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody id="tabla-pagos-cliente-body"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. PANEL NUEVA OPERACIÓN (ANCHO COMPLETO SIN COMPRIMIR) -->
+     <!-- PANEL NUEVA OPERACIÓN -->
+      <div id="panel-operacion" class="panel">
+        <div class="card">
+          <div class="card-header">Registro de Nueva Operación Financiera</div>
+          
+          <div class="tipo-op-selector">
+            <button type="button" class="btn-tipo-op activo" id="btn-tipo-articulo" onclick="seleccionarTipoOperacion('ARTICULO')">
+              📦 Venta de Artículo (Electro / Kiosco)
+            </button>
+            <button type="button" class="btn-tipo-op" id="btn-tipo-prestamo" onclick="seleccionarTipoOperacion('PRESTAMO')">
+              💵 Préstamo Personal en Efectivo
+            </button>
+          </div>
+          <input type="hidden" id="tipo-operacion-actual" value="ARTICULO">
+
+          <form id="form-venta" onsubmit="guardarVenta(event)">
+            <div class="grid-form">
+              <div class="field" style="grid-column: span 2;">
+                <label>Abonado / Titular *</label>
+                <select id="venta-cliente" required></select>
+              </div>
+              <div class="field">
+                <label id="lbl-concepto-nombre">Artículo / Concepto *</label>
+                <input type="text" id="venta-producto" placeholder='Ej: Smart TV 43" Noblex' required>
+              </div>
+              <div class="field">
+                <label>Fecha de Operación</label>
+                <input type="date" id="venta-fecha" required>
+              </div>
+            </div>
+
+            <div id="bloque-calculo-articulo" class="grid-form">
+              <div class="field">
+                <label>Precio Costo ($)</label>
+                <input type="number" id="calc-costo" step="0.01" value="0" oninput="recalcularDesdeCosto()">
+              </div>
+              <div class="field">
+                <label>Ganancia Margen (%)</label>
+                <input type="number" id="calc-margen" step="0.1" value="30" oninput="recalcularDesdeCosto()">
+              </div>
+              <div class="field">
+                <label>Precio Contado ($)</label>
+                <input type="number" id="calc-precio-contado" step="0.01" value="0" oninput="recalcularDesdeContado()">
+              </div>
+              <div class="field">
+                <label>Entrega / Anticipo ($)</label>
+                <input type="number" id="calc-anticipo" step="0.01" value="0" oninput="actualizarPlanCuotas()">
+              </div>
+              <div class="field">
+                <label>Plan de Cuotas</label>
+                <select id="calc-cuotas" onchange="actualizarPlanCuotas()">
+                  <option value="1">1 Pago Contado</option>
+                  <option value="2">2 Cuotas</option>
+                  <option value="3" selected>3 Cuotas (Sin interés)</option>
+                  <option value="4">4 Cuotas</option>
+                  <option value="6">6 Cuotas</option>
+                  <option value="9">9 Cuotas</option>
+                  <option value="12">12 Cuotas</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Recargo mensual p/cuota extra (%)</label>
+                <input type="number" id="calc-recargo-tasa" step="0.5" value="5" oninput="actualizarPlanCuotas()">
+              </div>
+            </div>
+
+            <div id="bloque-calculo-prestamo" class="grid-form" style="display:none;">
+              <div class="field">
+                <label>Capital Prestado en Mano ($)</label>
+                <input type="number" id="prestamo-capital" step="0.01" value="0" oninput="recalcularPrestamo()">
+              </div>
+              <div class="field">
+                <label>Tasa / Interés Ganancia (%)</label>
+                <input type="number" id="prestamo-tasa" step="0.5" value="20" oninput="recalcularPrestamo()">
+              </div>
+              <div class="field">
+                <label>Total Final a Devolver ($)</label>
+                <input type="number" id="prestamo-total" step="0.01" value="0" oninput="recalcularPrestamoDesdeTotal()">
+              </div>
+              <div class="field">
+                <label>Cantidad de Cuotas</label>
+                <select id="prestamo-cuotas" onchange="recalcularPrestamo()">
+                  <option value="1">1 Cuota</option>
+                  <option value="2">2 Cuotas</option>
+                  <option value="3" selected>3 Cuotas</option>
+                  <option value="4">4 Cuotas</option>
+                  <option value="6">6 Cuotas</option>
+                  <option value="9">9 Cuotas</option>
+                  <option value="12">12 Cuotas</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- BOTÓN VER TABLA COMPARATIVA ARRIBA DEL GARANTE -->
+            <div style="margin: 10px 0 14px 0;">
+              <button type="button" class="btn" style="background:var(--bg-surface-subtle); border:1px solid var(--border);" id="btn-ver-comparativa" onclick="alternarTablaCuotas()">
+                📊 Ver tabla comparativa
+              </button>
+            </div>
+
+            <div id="wrap-tabla-comparativa" style="display:none; margin-bottom:16px;">
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Plan</th>
+                      <th>Interés</th>
+                      <th>Total</th>
+                      <th>Valor Cuota</th>
+                      <th>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody id="body-comparativo"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- CUADRO DE GARANTE SOLIDARIO -->
+            <div class="garante-toggle-box">
+              <label class="garante-check-label">
+                <input type="checkbox" id="check-requiere-garante" onchange="alternarCamposGarante()">
+                <span>🛡️ Requiere Garante Solidario</span>
+              </label>
+
+              <div id="box-campos-garante" class="garante-campos">
+                <div class="grid-form">
+                  <div class="field">
+                    <label>Nombre y Apellido del Garante</label>
+                    <input type="text" id="garante-nombre" placeholder="Ej: Mario Gómez">
+                  </div>
+                  <div class="field">
+                    <label>DNI / CUIT del Garante</label>
+                    <input type="text" id="garante-dni" placeholder="Ej: 28.123.456">
+                  </div>
+                  <div class="field">
+                    <label>Teléfono Garante (WhatsApp)</label>
+                    <input type="text" id="garante-telefono" placeholder="Ej: 3843-123456">
+                  </div>
+                  <div class="field">
+                    <label>Domicilio del Garante</label>
+                    <input type="text" id="garante-direccion" placeholder="Ej: B° Belgrano">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="result-display">
+              <div class="result-box">
+                <span id="lbl-res-base">Base Contado</span>
+                <strong id="res-base">$0.00</strong>
+              </div>
+              <div class="result-box">
+                <span id="lbl-res-recargo">Recargo Financiación</span>
+                <strong id="res-recargo">0%</strong>
+              </div>
+              <div class="result-box">
+                <span>Total Operación</span>
+                <strong id="res-total" style="color:var(--primary);">$0.00</strong>
+              </div>
+              <div class="result-box">
+                <span>Plan de Pago</span>
+                <strong id="res-cuota" style="color:var(--success);">3 de $0.00</strong>
+              </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+              <button type="submit" id="btn-submit-operacion" class="btn btn-main" style="width: 100%; padding: 12px; font-size: 14px;">
+                Emitir Plan de Crédito Comercial
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- PANEL CARTERA DE ABONADOS -->
+      <div id="panel-cartera" class="panel">
+        <div class="card">
+          <div class="card-header">Alta de Nuevo Abonado</div>
+          <form id="form-cliente" onsubmit="guardarCliente(event)">
+            <div class="grid-form">
+              <div class="field">
+                <label>Nombre y Apellido *</label>
+                <input type="text" id="cli-nombre" required>
+              </div>
+              <div class="field">
+                <label>DNI / CUIT</label>
+                <input type="text" id="cli-dni">
+              </div>
+              <div class="field">
+                <label>Teléfono (WhatsApp)</label>
+                <input type="text" id="cli-telefono">
+              </div>
+              <div class="field">
+                <label>Dirección / Localidad</label>
+                <input type="text" id="cli-direccion">
+              </div>
+            </div>
+            <div class="field" style="margin-bottom:16px;">
+              <label>Notas de Referencia</label>
+              <textarea id="cli-notas" rows="2" placeholder="Lugar de trabajo, límites o acuerdos..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-main">Registrar Abonado</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-header">Padrón de Abonados</div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre y Apellido</th>
+                  <th>DNI</th>
+                  <th>Teléfono</th>
+                  <th>Dirección</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-clientes-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL CONFIGURACIÓN -->
+      <div id="panel-config" class="panel">
+        <div class="config-menu-tabs">
+          <button class="cfg-tab-btn activo" onclick="cambiarSubConfig('tickets', this)">🎫 Tickets & Impresora</button>
+          <button class="cfg-tab-btn" onclick="cambiarSubConfig('usuarios', this)">👤 Cajeros & Acceso</button>
+          <button class="cfg-tab-btn" onclick="cambiarSubConfig('backup', this)">💾 Copias & Seguridad</button>
+          <button class="cfg-tab-btn" onclick="cambiarSubConfig('logo-comercio', this)">🏪 Logo Comercio</button>
+          <button class="cfg-tab-btn" id="tab-btn-soporte-contacto" style="display: none;" onclick="cambiarSubConfig('soporte', this)">📞 Soporte & Contactos</button>
+          <button class="cfg-tab-btn" id="tab-btn-mp-soporte" style="display: none;" onclick="cambiarSubConfig('mp-api', this)">💳 Mercado Pago</button>
+        </div>
+
+        <!-- 5.1 TICKETS -->
+        <div id="cfg-sub-tickets" class="cfg-subpanel activo">
+          <div class="card">
+            <div class="card-header">Personalización de Tickets Térmicos</div>
+            <form onsubmit="guardarConfiguracionTickets(event)">
+              <div class="grid-form">
+                <div class="field" style="grid-column: span 2;">
+                  <label>Razón Social / Nombre Comercial</label>
+                  <input type="text" id="cfg-nombre" value="UltraCuotas" required>
+                </div>
+                <div class="field" style="grid-column: span 2;">
+                  <label>Dirección del Local</label>
+                  <input type="text" id="cfg-direccion" placeholder="Av. San Martín 123">
+                </div>
+                <div class="field">
+                  <label>Teléfono Comercial</label>
+                  <input type="text" id="cfg-telefono" placeholder="3843-404771">
+                </div>
+                <div class="field">
+                  <label>Ancho Ticket Térmico</label>
+                  <select id="cfg-ancho">
+                    <option value="80mm" selected>80mm (Estándar Térmico)</option>
+                    <option value="58mm">58mm (Portátil / Mini)</option>
+                    <option value="100mm">100mm</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field" style="margin-bottom: 16px;">
+                <label>Mensaje al Pie del Recibo</label>
+                <textarea id="cfg-pie" rows="2">¡Muchas gracias por su compra!</textarea>
+              </div>
+              <input type="hidden" id="cfg-logo-base64">
+              <input type="hidden" id="cfg-tg-token">
+              <input type="hidden" id="cfg-tg-chatid">
+              <input type="hidden" id="cfg-mp-token">
+              <div style="display:flex; gap:10px;">
+                <button type="submit" class="btn btn-main">Guardar Datos de Ticket</button>
+                <button type="button" class="btn" style="background:var(--bg-surface-subtle); border:1px solid var(--border);" onclick="imprimirTicketPrueba()">🖨️ Probar Ticket</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- 5.2 CAJEROS -->
+        <div id="cfg-sub-usuarios" class="cfg-subpanel">
+          <div class="card">
+            <div class="card-header">Alta de Nuevo Cajero</div>
+            <form onsubmit="crearNuevoCajero(event)">
+              <div class="grid-form">
+                <div class="field">
+                  <label>Nombre y Apellido</label>
+                  <input type="text" id="nuevo-usr-nombre" required>
+                </div>
+                <div class="field">
+                  <label>Nombre de Usuario</label>
+                  <input type="text" id="nuevo-usr-usuario" required>
+                </div>
+                <div class="field">
+                  <label>Contraseña</label>
+                  <input type="password" id="nuevo-usr-clave" required>
+                </div>
+                <div class="field">
+                  <label>Rol de Acceso</label>
+                  <select id="nuevo-usr-rol">
+                    <option value="CAJERO">CAJERO</option>
+                    <option value="ADMIN">ADMINISTRADOR</option>
+                  </select>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-main">Crear Cajero</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="card-header">Cajeros Habilitados</div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Usuario</th>
+                    <th>Rol</th>
+                    <th style="text-align:center;">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-usuarios-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. COPIAS DE SEGURIDAD PARALELAS (UNA AL LADO DE LA OTRA) -->
+        <div id="cfg-sub-backup" class="cfg-subpanel">
+          <div class="card">
+            <div class="card-header">Copia de Seguridad de la Base de Datos</div>
+            <div class="backup-grid-dos-columnas">
+              <div class="backup-box">
+                <div>
+                  <strong style="font-size: 15px;">📥 Descargar Copia Manual (.sqlite)</strong>
+                  <p style="font-size:12px; color:var(--text-muted); margin: 8px 0 16px 0;">Descargá un archivo de respaldo con todos los clientes, créditos y pagos registrados.</p>
+                </div>
+                <button type="button" class="btn btn-main" style="width: 100%;" onclick="descargarBackup()">Descargar Copia Ahora</button>
+              </div>
+
+              <div class="backup-box">
+                <div>
+                  <strong style="font-size: 15px;">📤 Restaurar Base de Datos</strong>
+                  <p style="font-size:12px; color:var(--text-muted); margin: 8px 0 16px 0;">Subí un archivo `.sqlite` para restaurar un estado anterior de tu sistema.</p>
+                </div>
+                <input type="file" id="input-restaurar-db" accept=".sqlite" style="display:none;" onchange="ejecutarRestauracion(this)">
+                <button type="button" class="btn btn-danger" style="width: 100%;" onclick="document.getElementById('input-restaurar-db').click()">Seleccionar Respaldo y Restaurar</button>
+              </div>
+            </div>
+
+            <div id="box-telegram-soporte" class="backup-box" style="display: none; border-left: 4px solid var(--primary); margin-top: 16px;">
+              <strong>📲 Copia Automática a Telegram (Soporte)</strong>
+              <div class="grid-form" style="margin-top: 10px;">
+                <div class="field">
+                  <label>Bot Token</label>
+                  <input type="text" id="cfg-tg-token-view" placeholder="123456:ABC-DEF...">
+                </div>
+                <div class="field">
+                  <label>Chat ID</label>
+                  <input type="text" id="cfg-tg-chatid-view" placeholder="987654321">
+                </div>
+              </div>
+              <div style="display:flex; gap:10px; margin-top:10px;">
+                <button type="button" class="btn btn-main" onclick="guardarConfiguracionTelegram()">Guardar Telegram</button>
+                <button type="button" class="btn" style="background:var(--bg-surface); border:1px solid var(--border);" onclick="probarEnvioTelegram()">Probar Envío</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5.4 LOGO COMERCIO -->
+        <div id="cfg-sub-logo-comercio" class="cfg-subpanel">
+          <div class="card">
+            <div class="card-header">Logo de tu Comercio (Cabecera y Tickets)</div>
+            <div style="border: 2px dashed var(--border); border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 16px;">
+              <img id="img-logo-cfg-view" style="max-height: 80px; max-width: 220px; object-fit: contain; margin-bottom: 10px; display: none;">
+              <span id="txt-sin-logo-cfg" style="color: var(--text-muted); font-size: 13px;">No hay un logo personalizado asignado</span>
+            </div>
+            <input type="file" id="file-logo-comercio" accept="image/*" style="display:none;" onchange="procesarArchivoLogoSubpanel(this)">
+            <div style="display: flex; gap: 10px;">
+              <button type="button" class="btn btn-main" onclick="document.getElementById('file-logo-comercio').click()">📁 Cambiar Logo</button>
+              <button type="button" class="btn btn-danger" onclick="quitarLogoComercio()">Quitar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5.5 SOPORTE Y CONTACTOS DINÁMICOS -->
+        <div id="cfg-sub-soporte" class="cfg-subpanel">
+          <div class="card">
+            <div class="card-header">Configuración de Contactos de Soporte (Pantalla de Login)</div>
+            <form onsubmit="guardarConfiguracionSoporte(event)">
+              <div class="field" style="margin-bottom: 14px;">
+                <label>Texto Promocional / Encabezado</label>
+                <input type="text" id="cfg-soporte-texto" placeholder="¿Querés contratar este sistema? Instalación y soporte." required>
+              </div>
+              <div class="grid-form">
+                <div class="field">
+                  <label>Contacto Principal (WhatsApp 1) *</label>
+                  <input type="text" id="cfg-soporte-wsp1" placeholder="+54 9 3843-404771" required>
+                </div>
+                <div class="field">
+                  <label>Contacto Secundario (Opcional - WhatsApp 2)</label>
+                  <input type="text" id="cfg-soporte-wsp2" placeholder="+54 9 3844-000000">
+                </div>
+              </div>
+              <button type="submit" class="btn btn-main" style="margin-top: 10px;">Guardar Contactos de Soporte</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- 5.6 MERCADO PAGO -->
+        <div id="cfg-sub-mp-api" class="cfg-subpanel">
+          <div class="card">
+            <div class="card-header">Integración en Vivo Mercado Pago</div>
+            <form onsubmit="guardarConfiguracionMP(event)">
+              <div class="field" style="margin-bottom: 14px;">
+                <label>Access Token de Producción (APP_USR-...)</label>
+                <input type="password" id="cfg-mp-token" placeholder="APP_USR-000000000000-000000-..." autocomplete="off">
+              </div>
+              <div style="display:flex; gap:10px;">
+                <button type="submit" class="btn btn-main">Guardar Credencial</button>
+                <button type="button" class="btn" style="background:#009ee3; color:#fff;" onclick="probarSimulacionTransferencia()">⚡ Simular Transferencia</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALES -->
+  <div id="modal-cobrar" class="modal-backdrop">
+    <div class="modal-box">
+      <h3 style="font-size: 18px; margin-bottom: 14px;">Registrar Cobro de Cuota</h3>
+      <div id="box-aviso-mora" class="alerta-mora-box" style="display:none;">
+        <span>⚠️</span>
+        <div><strong>Recargo de Mora Aplicado</strong><span id="txt-dias-mora" style="display:block; font-size:12px;"></span></div>
+      </div>
+      <form onsubmit="confirmarCobroCuotaModal(event)">
+        <input type="hidden" id="cobro-cuota-id">
+        <input type="hidden" id="cobro-credito-id">
+        <div class="field" style="margin-bottom: 12px;">
+          <label>Monto Cuota Pura ($)</label>
+          <input type="number" id="cobro-monto-input" step="0.01" required oninput="actualizarTotalCobroModal()">
+        </div>
+        <div class="field" style="margin-bottom: 12px;">
+          <label>Interés por Mora / Gastos ($)</label>
+          <input type="number" id="cobro-mora-input" step="0.01" value="0.00" oninput="actualizarTotalCobroModal()">
+        </div>
+        <div class="field" style="margin-bottom: 14px;">
+          <label>Forma de Pago</label>
+          <select id="cobro-metodo-select">
+            <option value="EFECTIVO" selected>Efectivo</option>
+            <option value="TRANSFERENCIA">Transferencia / Mercado Pago</option>
+            <option value="DEBITO">Tarjeta de Débito</option>
+          </select>
+        </div>
+        <div class="result-display" style="margin-top:0; margin-bottom:16px;">
+          <div class="result-box" style="grid-column: span 2;">
+            <span>Total a Cobrar</span>
+            <strong id="lbl-total-cobro-final" style="color:var(--success); font-size:24px;">$0.00</strong>
+          </div>
+        </div>
+        <div id="cobro-modal-info" style="font-size:12px; color:var(--text-muted); margin-bottom:16px;"></div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn" style="background:var(--bg-surface-subtle); border:1px solid var(--border);" onclick="cerrarModalCobrar()">Cancelar</button>
+          <button type="submit" class="btn btn-main">Confirmar Cobro e Imprimir</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-movimiento" class="modal-backdrop">
+    <div class="modal-box">
+      <h3 id="modal-mov-titulo" style="font-size: 18px; margin-bottom: 14px;">Movimiento Manual</h3>
+      <form onsubmit="guardarMovimientoCaja(event)">
+        <input type="hidden" id="mov-tipo">
+        <div class="field" style="margin-bottom: 12px;">
+          <label>Monto ($)</label>
+          <input type="number" id="mov-monto" step="0.01" required>
+        </div>
+        <div class="field" style="margin-bottom: 16px;">
+          <label>Motivo o Concepto</label>
+          <input type="text" id="mov-concepto" placeholder="Ej: Pago de flete, compras, etc." required>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn" style="background:var(--bg-surface-subtle); border:1px solid var(--border);" onclick="cerrarModalMovimiento()">Cancelar</button>
+          <button type="submit" class="btn btn-main">Registrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-cierre" class="modal-backdrop">
+    <div class="modal-box">
+      <h3 style="font-size: 18px; margin-bottom: 14px;">Arqueo y Cierre Definitivo de Caja</h3>
+      <form onsubmit="ejecutarCierreCaja(event)">
+        <div class="result-display" style="margin-top:0; margin-bottom:14px;">
+          <div class="result-box">
+            <span>Efectivo Esperado</span>
+            <strong id="lbl-cierre-esperado">$0.00</strong>
+          </div>
+          <div class="result-box" id="box-cierre-diferencia" style="display:none;">
+            <span>Diferencia</span>
+            <strong id="lbl-cierre-diferencia">$0.00</strong>
+          </div>
+        </div>
+        <div class="field" style="margin-bottom: 16px;">
+          <label>Efectivo Real en Cajón ($)</label>
+          <input type="number" id="cierre-monto-real" step="0.01" required oninput="recalcularDiferenciaArqueoModal()">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn" style="background:var(--bg-surface-subtle); border:1px solid var(--border);" onclick="cerrarModalCierre()">Cancelar</button>
+          <button type="submit" class="btn btn-danger">Confirmar Cierre y Enviar Respaldo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-transferencia-recibida" class="modal-backdrop">
+    <div class="modal-transferencia-box">
+      <div style="background:#009ee3; color:#fff; padding:5px 12px; border-radius:20px; font-size:12px; font-weight:800; display:inline-flex; align-items:center; gap:6px; margin-bottom:14px;">⚡ MERCADO PAGO EN VIVO</div>
+      <h2 style="font-size: 22px; color: #009ee3; margin-bottom: 6px;">¡Transferencia Acreditada!</h2>
+      <div style="font-size: 34px; font-weight: 800; color: var(--text-main); margin: 12px 0;" id="lbl-mp-monto-transferido">$0.00</div>
+      <div style="background: var(--bg-surface-subtle); padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 13px;">
+        <div>Pagador: <strong id="lbl-mp-pagador">-</strong></div>
+        <div style="margin-top: 4px; color: var(--text-muted);">Comprobante: <span id="lbl-mp-op-id">-</span></div>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button type="button" class="btn btn-main" style="flex:1; background:#009ee3;" onclick="aplicarTransferenciaAlCobro()">Imputar a Cobro</button>
+        <button type="button" class="btn" style="background:var(--bg-surface-subtle); border:1px solid var(--border);" onclick="cerrarAvisoTransferencia()">Solo Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-editar" class="modal-backdrop">
+    <div class="modal-box">
+      <h3 style="font-size: 18px; margin-bottom: 14px;">Modificar Datos de Abonado</h3>
+      <form onsubmit="guardarEdicion(event)">
+        <input type="hidden" id="edit-id">
+        <div class="field" style="margin-bottom: 10px;">
+          <label>Nombre y Apellido</label>
+          <input type="text" id="edit-nombre" required>
+        </div>
+        <div class="field" style="margin-bottom: 10px;">
+          <label>DNI / CUIT</label>
+          <input type="text" id="edit-dni">
+        </div>
+        <div class="field" style="margin-bottom: 10px;">
+          <label>Teléfono</label>
+          <input type="text" id="edit-telefono">
+        </div>
+        <div class="field" style="margin-bottom: 10px;">
+          <label>Dirección</label>
+          <input type="text" id="edit-direccion">
+        </div>
+        <div class="field" style="margin-bottom: 14px;">
+          <label>Notas</label>
+          <textarea id="edit-notas" rows="2"></textarea>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn" style="background:var(--bg-surface-subtle); border:1px solid var(--border);" onclick="cerrarModal()">Cancelar</button>
+          <button type="submit" class="btn btn-main">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+<!-- MODAL SEGURIDAD SALIDA CAJERO -->
+  <div id="modal-salida-segura" class="modal-backdrop">
+    <div class="modal-box" style="text-align: center;">
+      <h3 style="font-size: 19px; margin-bottom: 8px;">⚠️ Turno de Caja Abierto</h3>
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+        Actualmente tenés una sesión de caja activa con movimientos registrados.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button type="button" class="btn btn-main" style="padding: 12px;" onclick="confirmarSalidaSinCerrarCaja()">
+          🔒 Bloquear pantalla (Salir sin cerrar caja)
+        </button>
+        <button type="button" class="btn btn-danger" style="padding: 12px;" onclick="irACerrarCajaDesdeSalida()">
+          💵 Hacer Arqueo y Cerrar Caja Definitivo
+        </button>
+        <button type="button" class="btn" style="background: var(--bg-surface-subtle); border: 1px solid var(--border); padding: 10px;" onclick="cerrarModalSalidaSegura()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+<!-- MODAL CAMBIAR CONTRASEÑA -->
+  <div id="modal-cambiar-clave" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 400px;">
+      <h3 style="font-size: 18px; margin-bottom: 6px;">🔑 Cambiar Contraseña</h3>
+      <p id="lbl-cambiar-clave-user" style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Usuario: admin</p>
+      
+      <form onsubmit="guardarNuevaClaveUsuario(event)">
+        <input type="hidden" id="cambio-clave-usr-id">
+        <div class="field" style="margin-bottom: 16px;">
+          <label>Nueva Contraseña *</label>
+          <input type="password" id="cambio-clave-input" placeholder="Nueva clave..." required minlength="3">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn" style="background: var(--bg-surface-subtle); border: 1px solid var(--border);" onclick="cerrarModalCambioClave()">Cancelar</button>
+          <button type="submit" class="btn btn-main">Actualizar Contraseña</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
